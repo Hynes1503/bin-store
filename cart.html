@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/binstore.css" />
+    <title>Giỏ hàng - Bin Store</title>
+    <style>
+      .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 410px;
+        gap: 28px;
+        align-items: start;
+      }
+      .cart-card,
+      .summary {
+        padding: 26px;
+      }
+      .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .cart-table th {
+        background: #f4eee5;
+        color: #68615b;
+        text-align: left;
+        padding: 14px;
+        font-size: 14px;
+      }
+      .cart-table th:first-child {
+        border-radius: 14px 0 0 14px;
+      }
+      .cart-table th:last-child {
+        border-radius: 0 14px 14px 0;
+      }
+      .cart-table td {
+        padding: 20px 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+      }
+      .prod {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .prod img {
+        width: 98px;
+        height: 82px;
+        object-fit: contain;
+        background: #f7f3ee;
+        border-radius: 16px;
+        padding: 8px;
+      }
+      .qty {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .qty button {
+        width: 40px;
+        height: 36px;
+        border: 0;
+        background: #fff;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      .qty span {
+        width: 40px;
+        text-align: center;
+        font-weight: 900;
+      }
+      .remove {
+        border: 0;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+      }
+      .coupon {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .coupon input {
+        flex: 1;
+        height: 50px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0 18px;
+        outline: 0;
+      }
+      .summary {
+        position: sticky;
+        top: 20px;
+      }
+      .line {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin: 17px 0;
+        color: #555;
+      }
+      .line strong {
+        color: #111;
+      }
+      .line.discount strong {
+        color: var(--green);
+      }
+      .total {
+        border-top: 2px solid #111;
+        padding-top: 18px;
+        margin-top: 18px;
+      }
+      .total strong {
+        font-size: 24px;
+        color: var(--gold);
+      }
+      .notice {
+        background: #eaf7ef;
+        color: #177b43;
+        border-radius: 14px;
+        padding: 16px;
+        margin: 22px 0;
+        line-height: 1.45;
+      }
+      .summary .btn {
+        width: 100%;
+        margin-top: 12px;
+      }
+      .empty {
+        text-align: center;
+        padding: 48px;
+        color: #777;
+      }
+      .empty h3 {
+        color: #111;
+        font-size: 24px;
+      }
+      .empty .btn {
+        margin-top: 12px;
+      }
+      .cart-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 14px;
+      }
+      @media (max-width: 950px) {
+        .cart-layout {
+          grid-template-columns: 1fr;
+        }
+        .summary {
+          position: static;
+        }
+        .cart-table thead {
+          display: none;
+        }
+        .cart-table,
+        .cart-table tbody,
+        .cart-table tr,
+        .cart-table td {
+          display: block;
+        }
+        .cart-table tr {
+          border-bottom: 1px solid var(--line);
+          padding: 12px 0;
+        }
+        .cart-table td {
+          border: 0;
+          padding: 10px;
+        }
+        .coupon {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="js/store.js"></script>
+    <script>
+      let couponApplied = false;
+      function calc() {
+        const cart = getCart();
+        const subtotal = cart.reduce((s, i) => {
+          const p = PRODUCTS.find((x) => x.id == i.id);
+          return s + (p ? p.price * i.qty : 0);
+        }, 0);
+        const qty = cart.reduce((s, i) => s + i.qty, 0);
+        const discount =
+          couponApplied && qty > 0
+            ? Math.min(950000, Math.round(subtotal * 0.1))
+            : 0;
+        const shipping = qty === 0 ? 0 : subtotal >= 2000000 ? 0 : 30000;
+        const total = Math.max(0, subtotal - discount + shipping);
+        return { cart, subtotal, qty, discount, shipping, total };
+      }
+      function applyCoupon() {
+        if (calc().qty === 0) {
+          toast("Giỏ hàng đang trống");
+          return;
+        }
+        couponApplied = true;
+        renderCart();
+        toast("Đã áp dụng mã giảm giá");
+      }
+      function renderCart() {
+        const c = calc();
+        document.getElementById("itemCount").textContent = c.qty;
+        document.getElementById("sumQty").textContent = c.qty;
+        document.getElementById("subtotal").textContent = money(c.subtotal);
+        document.getElementById("discount").textContent =
+          "-" + money(c.discount);
+        document.getElementById("shipping").textContent =
+          c.shipping === 0 ? "0đ" : money(c.shipping);
+        document.getElementById("total").textContent = money(c.total);
+        const pay = document.getElementById("payBtn");
+        pay.classList.toggle("disabled", c.qty === 0);
+        const list = document.getElementById("cartList");
+        if (c.qty === 0) {
+          list.innerHTML = `<div class="empty"><h3>Giỏ hàng đang trống</h3><p>Hãy thêm sản phẩm để bắt đầu mua sắm.</p><a class="btn" href="allproduct.html">Tiếp tục mua sắm</a></div>`;
+          updateCounts();
+          return;
+        }
+        list.innerHTML = `<table class="cart-table"><thead><tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th><th></th></tr></thead><tbody>${c.cart
+          .map((i) => {
+            const p = PRODUCTS.find((x) => x.id == i.id);
+            return `<tr><td><div class="prod"><img src="${imgPath(p)}"><div><b>${p.name}</b><p class="muted">Màu: ${i.color || p.color} · Size: ${i.size}</p></div></div></td><td class="money">${money(p.price)}</td><td><div class="qty"><button onclick="changeQty(${i.id},'${i.size}',-1);renderCart()">−</button><span>${i.qty}</span><button onclick="changeQty(${i.id},'${i.size}',1);renderCart()">+</button></div></td><td class="money">${money(p.price * i.qty)}</td><td><button class="remove" onclick="removeFromCart(${i.id},'${i.size}');renderCart()">🗑</button></td></tr>`;
+          })
+          .join("")}</tbody></table>`;
+        updateCounts();
+      }
+      document.getElementById("app").innerHTML =
+        header() +
+        `<main class="container"><div class="cart-layout"><section class="card cart-card"><h1>Giỏ hàng của bạn (<span id="itemCount">0</span>)</h1><div id="cartList"></div><div class="coupon"><input id="coupon" placeholder="Nhập mã giảm giá..."><button class="btn gold" onclick="applyCoupon()">Áp dụng</button><button class="btn outline" onclick="clearCart();couponApplied=false;renderCart()">Xóa tất cả</button></div></section><aside class="card summary"><h2>Tóm tắt đơn hàng</h2><div class="line"><span>Tạm tính (<span id="sumQty">0</span> sản phẩm)</span><strong id="subtotal">0đ</strong></div><div class="line discount"><span>Giảm giá</span><strong id="discount">0đ</strong></div><div class="line"><span>Vận chuyển</span><strong id="shipping">0đ</strong></div><div class="line total"><span>Tổng cộng</span><strong id="total">0đ</strong></div><div class="notice">🚚 Đơn hàng từ 2.000.000đ được miễn phí vận chuyển. Khi giỏ hàng trống, phí vận chuyển sẽ là 0đ.</div><a id="payBtn" class="btn gold" href="payment.html">Tiến hành thanh toán</a><a class="btn outline" href="allproduct.html">← Tiếp tục mua sắm</a></aside></div>${trust()}</main>` +
+        footer();
+      renderCart();
+    </script>
+  </body>
+</html>

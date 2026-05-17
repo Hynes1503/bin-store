@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/binstore.css" />
+    <title>Bin Store - Chi tiết sản phẩm</title>
+    <style>
+      .product-wrap {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 28px;
+        align-items: start;
+      }
+      .gallery {
+        padding: 20px;
+      }
+      .main-img {
+        height: 520px;
+        border-radius: 20px;
+        display: grid;
+        place-items: center;
+      }
+      .main-img img {
+        width: 86%;
+        height: 410px;
+        object-fit: contain;
+        filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.12));
+      }
+      .thumbs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 16px;
+      }
+      .thumb {
+        height: 92px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+      .thumb.active {
+        border: 2px solid #111;
+      }
+      .thumb img {
+        height: 78px;
+        width: 100%;
+        object-fit: contain;
+      }
+      .detail {
+        padding: 34px;
+      }
+      .crumb {
+        font-size: 12px;
+        font-weight: 900;
+        color: #777;
+        text-transform: uppercase;
+      }
+      .detail h1 {
+        font-size: 44px;
+        line-height: 1.05;
+        margin: 18px 0 8px;
+      }
+      .price {
+        font-size: 30px;
+        font-weight: 1000;
+        margin-bottom: 26px;
+      }
+      .opt {
+        margin: 24px 0;
+      }
+      .colors {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .color {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 1px solid #bbb;
+      }
+      .sizes {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .size {
+        height: 48px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .size.active {
+        background: #111;
+        color: #fff;
+      }
+      .detail .btn {
+        width: 100%;
+        margin: 7px 0;
+      }
+      .description {
+        margin-top: 24px;
+        line-height: 1.7;
+      }
+      .recommend {
+        margin-top: 34px;
+      }
+      .recommend-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+      .mini {
+        padding: 16px;
+      }
+      .mini img {
+        height: 120px;
+        width: 100%;
+        border-radius: 16px;
+        padding: 8px;
+        margin-bottom: 12px;
+      }
+      @media (max-width: 950px) {
+        .product-wrap,
+        .recommend-grid {
+          grid-template-columns: 1fr;
+        }
+        .detail h1 {
+          font-size: 34px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="js/store.js"></script>
+    <script>
+      let selectedSize = 42;
+      function swapImg(src, el) {
+        document.getElementById("mainProductImg").src = src;
+        document
+          .querySelectorAll(".thumb")
+          .forEach((x) => x.classList.remove("active"));
+        el.classList.add("active");
+      }
+      function render() {
+        const id = Number(new URLSearchParams(location.search).get("id") || 1);
+        const p = PRODUCTS.find((x) => x.id === id) || PRODUCTS[0];
+        document.title = "Bin Store - " + p.name;
+        const gallery = [1, 2, 3, 4].map((i) => detailPath(p.id, i));
+        document.getElementById("app").innerHTML =
+          header("products") +
+          `<main class="container"><section class="product-wrap"><div class="card gallery"><div class="main-img"><img id="mainProductImg" src="${gallery[0]}" alt="${p.name}"></div><div class="thumbs">${gallery.map((src, i) => `<div class="thumb ${i == 0 ? "active" : ""}" onclick="swapImg('${src}',this)"><img src="${src}" alt="${p.name}"></div>`).join("")}</div></div><aside class="card detail"><div class="crumb">Home / All Product / ${p.name}</div><h1>${p.name}</h1><div class="price">${money(p.price)}</div><div class="opt"><b>SELECT COLOR</b><div class="colors"><span class="color" style="background:#fff"></span><span class="color" style="background:#e8e0d5"></span><span class="color" style="background:#111"></span></div></div><div class="opt"><b>SELECT SIZE</b><div class="sizes">${[36, 37, 38, 39, 40, 41, 42, 43].map((s) => `<button class="size ${s == selectedSize ? "active" : ""}" onclick="selectedSize=${s};render()">${s}</button>`).join("")}</div></div><button class="btn" onclick="addToCart(${p.id},1,selectedSize,'${p.color}')">🛒 ADD TO BAG</button><button class="btn outline" onclick="toggleWishlist(${p.id});render()">♡ ADD TO WISHLIST</button><div class="description"><b>Description</b><p class="muted">${p.desc}</p></div></aside></section><section class="recommend"><h2>Sản phẩm liên quan</h2><div class="recommend-grid">${PRODUCTS.filter(
+            (x) => x.id !== p.id,
+          )
+            .slice(0, 4)
+            .map(
+              (x) =>
+                `<a class="card mini" href="product.html?id=${x.id}"><img src="${imgPath(x)}"><b>${x.name}</b><br><span>${money(x.price)}</span></a>`,
+            )
+            .join("")}</div></section></main>` +
+          footer();
+        updateCounts();
+      }
+      render();
+    </script>
+  </body>
+</html>

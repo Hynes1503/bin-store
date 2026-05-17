@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/binstore.css" />
+    <title>Hồ sơ - Bin Store</title>
+    <style>
+      .page-head {
+        text-align: center;
+        margin: 22px 0 34px;
+      }
+      .page-head h1 {
+        font-size: 38px;
+        margin-bottom: 8px;
+      }
+      .profile-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 28px;
+      }
+      .side,
+      .profile-panel,
+      .help {
+        padding: 24px;
+      }
+      .menu a {
+        display: block;
+        padding: 17px;
+        border-radius: 14px;
+        font-weight: 900;
+      }
+      .menu a.active {
+        background: #fff7ea;
+        color: #8c5f16;
+        border-left: 5px solid var(--gold);
+      }
+      .profile-panel h2 {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 18px;
+        margin-top: 0;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 28px;
+      }
+      label {
+        display: block;
+        font-weight: 900;
+        margin-bottom: 8px;
+      }
+      input {
+        width: 100%;
+        height: 52px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 0 16px;
+        font: inherit;
+        background: #fff;
+      }
+      .radio-row {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+        margin-top: 12px;
+      }
+      .radio-row label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        margin: 0;
+      }
+      .notice {
+        grid-column: 1/-1;
+        background: #fff3df;
+        border-radius: 16px;
+        padding: 18px;
+        color: #7a551d;
+      }
+      .actions {
+        margin-top: 26px;
+      }
+      .help {
+        text-align: center;
+        margin-top: 20px;
+      }
+      @media (max-width: 950px) {
+        .profile-layout,
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="js/store.js"></script>
+    <script>
+      function renderProfile() {
+        const u = getProfile();
+        document.getElementById("app").innerHTML =
+          header("profile") +
+          `<main class="container"><div class="page-head"><h1>Hồ sơ người dùng</h1><p class="muted">Quản lý thông tin tài khoản và thông tin cá nhân của bạn</p></div><div class="profile-layout"><aside><div class="card side">${accountMini()}<nav class="menu"><a class="active">Thông tin cá nhân</a><a>Đổi mật khẩu</a><a>Địa chỉ của tôi</a><a>Phương thức thanh toán</a><a>Thông báo</a><a class="logout" onclick="logout()">Đăng xuất</a></nav></div><div class="card help"><h3>Bạn cần hỗ trợ?</h3><p>Đội ngũ chăm sóc khách hàng luôn sẵn sàng hỗ trợ bạn</p><button class="btn">Liên hệ ngay</button></div></aside><section class="card profile-panel"><h2>Thông tin cá nhân</h2><div class="form-grid"><div><label>Họ và tên</label><input id="pfName" value="${u.name}"></div><div><label>Email</label><input id="pfEmail" value="${u.email}"></div><div><label>Số điện thoại</label><input id="pfPhone" value="${u.phone}"></div><div><label>Ngày sinh</label><input id="pfBirthday" type="text" value="${u.birthday}"></div><div><label>Giới tính</label><div class="radio-row"><label><input name="gender" type="radio" value="Nam" ${u.gender === "Nam" ? "checked" : ""}>Nam</label><label><input name="gender" type="radio" value="Nữ" ${u.gender === "Nữ" ? "checked" : ""}>Nữ</label><label><input name="gender" type="radio" value="Khác" ${u.gender === "Khác" ? "checked" : ""}>Khác</label></div></div><div><label>Địa chỉ</label><input id="pfAddress" value="${u.address}"></div><div class="notice"><b>Bảo mật thông tin</b><br>Thông tin của bạn được bảo mật tuyệt đối. Chúng tôi không chia sẻ thông tin cá nhân với bên thứ ba.</div></div><div class="actions"><button class="btn gold" onclick="saveProfileForm()">Cập nhật thông tin</button></div></section></div></main>` +
+          footer();
+        updateCounts();
+      }
+      function saveProfileForm() {
+        const gender =
+          document.querySelector('input[name="gender"]:checked')?.value ||
+          "Nam";
+        const profile = {
+          name: pfName.value.trim() || "Nguyễn Văn A",
+          email: pfEmail.value.trim() || "nguyenvana@gmail.com",
+          phone: pfPhone.value.trim(),
+          birthday: pfBirthday.value.trim(),
+          gender,
+          address: pfAddress.value.trim(),
+        };
+        setProfile(profile);
+        toast("Đã cập nhật thông tin");
+        renderProfile();
+      }
+      renderProfile();
+    </script>
+  </body>
+</html>

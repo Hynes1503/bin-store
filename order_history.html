@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/binstore.css" />
+    <title>Lịch sử đơn hàng - Bin Store</title>
+    <style>
+      .account {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 28px;
+      }
+      .side {
+        padding: 22px;
+      }
+      .menu a {
+        display: block;
+        padding: 16px;
+        border-radius: 14px;
+        font-weight: 800;
+        color: #333;
+      }
+      .menu a.active {
+        background: #111;
+        color: #fff;
+      }
+      .help {
+        margin-top: 18px;
+        padding: 24px;
+        text-align: center;
+      }
+      .content h1 {
+        margin: 0 0 8px;
+        font-size: 42px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 14px;
+        margin: 26px 0;
+        flex-wrap: wrap;
+      }
+      .search {
+        flex: 1;
+        min-width: 260px;
+        height: 52px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        padding: 0 20px;
+        font: inherit;
+      }
+      .pill {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 999px;
+        padding: 0 24px;
+        font-weight: 900;
+      }
+      .pill.active {
+        background: #111;
+        color: #fff;
+      }
+      .order {
+        margin-bottom: 22px;
+        overflow: hidden;
+      }
+      .order-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.7);
+      }
+      .status {
+        border-radius: 999px;
+        padding: 8px 15px;
+        font-size: 13px;
+        font-weight: 1000;
+      }
+      .blue {
+        background: #e8f1ff;
+        color: #2f7de1;
+      }
+      .green {
+        background: #e6f7ef;
+        color: #249b5b;
+      }
+      .orange {
+        background: #fff0de;
+        color: #e08319;
+      }
+      .red {
+        background: #ffe9e9;
+        color: #e45555;
+      }
+      .order-item {
+        display: grid;
+        grid-template-columns: 110px 1fr auto;
+        gap: 22px;
+        align-items: center;
+        padding: 22px 24px;
+      }
+      .order-item img {
+        width: 110px;
+        height: 88px;
+        object-fit: contain;
+        border-radius: 16px;
+        padding: 8px;
+      }
+      .order-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--line);
+        padding: 18px 24px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .actions .btn {
+        padding: 11px 18px;
+        min-height: 40px;
+      }
+      .total-price {
+        font-size: 22px;
+        font-weight: 1000;
+      }
+      .refund {
+        color: var(--green);
+      }
+      @media (max-width: 950px) {
+        .account {
+          grid-template-columns: 1fr;
+        }
+        .order-item {
+          grid-template-columns: 90px 1fr;
+        }
+        .order-item .money {
+          grid-column: 2;
+        }
+        .order-foot {
+          display: block;
+        }
+        .actions {
+          margin-top: 12px;
+        }
+        .side {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="js/store.js"></script>
+    <script>
+      const defaults = [
+        {
+          code: "#BIN-2025-0891",
+          date: "12/05/2025",
+          pay: "VNPay",
+          status: "ĐANG GIAO HÀNG",
+          cls: "blue",
+          items: [
+            { id: 15, qty: 1, size: 42 },
+            { id: 10, qty: 2, size: 43 },
+          ],
+          actions: ["Theo dõi đơn", "Liên hệ"],
+        },
+        {
+          code: "#BIN-2025-0745",
+          date: "28/04/2025",
+          pay: "MoMo",
+          status: "ĐÃ NHẬN HÀNG",
+          cls: "green",
+          items: [{ id: 11, qty: 1, size: 41 }],
+          actions: ["Đánh giá", "Mua lại", "Chi tiết"],
+        },
+        {
+          code: "#BIN-2025-0812",
+          date: "10/05/2025",
+          pay: "Thẻ tín dụng",
+          status: "ĐANG XỬ LÝ",
+          cls: "orange",
+          items: [{ id: 12, qty: 1, size: 40 }],
+          actions: ["Hủy đơn", "Chi tiết"],
+        },
+        {
+          code: "#BIN-2025-0634",
+          date: "15/03/2025",
+          pay: "Hoàn tiền đã xử lý",
+          status: "ĐÃ HỦY",
+          cls: "red",
+          items: [{ id: 13, qty: 1, size: 42 }],
+          actions: ["Mua lại", "Chi tiết"],
+          refund: true,
+        },
+      ];
+      function allOrders() {
+        const hidden = hiddenOrders();
+        return [...getOrders(), ...defaults].filter(
+          (o) => !hidden.includes(o.code),
+        );
+      }
+      function handleOrderAction(code, action) {
+        if (action === "Hủy đơn") {
+          setOrders(getOrders().filter((o) => o.code !== code));
+          hideOrder(code);
+          toast("Đã hủy đơn hàng");
+          renderOrders();
+        }
+      }
+      function renderOrders() {
+        document.getElementById("orders").innerHTML = allOrders()
+          .map((o) => {
+            let total =
+              o.total ||
+              o.items.reduce((s, i) => {
+                const p = PRODUCTS.find((x) => x.id == i.id);
+                return s + p.price * i.qty;
+              }, 0);
+            return `<article class="card order"><div class="order-head"><div><b>Mã đơn: ${o.code}</b><br><span class="muted">${o.date} · ${o.pay}</span></div><span class="status ${o.cls || "orange"}">${o.status}</span></div>${o.items
+              .map((i) => {
+                const p = PRODUCTS.find((x) => x.id == i.id);
+                return `<div class="order-item"><img src="${imgPath(p)}" alt="${p.name}"><div><b>${p.name}</b><p class="muted">${i.color || p.color} · Size ${i.size} · x${i.qty}</p></div><div class="money">${money(p.price * i.qty)}</div></div>`;
+              })
+              .join(
+                "",
+              )}<div class="order-foot"><div>${o.refund ? "Đã hoàn:" : "Tổng đơn:"} <span class="total-price ${o.refund ? "refund" : ""}">${o.refund ? "+" : ""}${money(total)}</span></div><div class="actions">${(o.actions || ["Chi tiết"]).map((a, j) => `<button class="btn ${j == (o.actions || []).length - 1 ? "" : "outline"}" onclick="handleOrderAction('${o.code}','${a}')">${a}</button>`).join("")}</div></div></article>`;
+          })
+          .join("");
+      }
+      document.getElementById("app").innerHTML =
+        header("orders") +
+        `<main class="container account"><aside><div class="card side">${accountMini()}<nav class="menu"><a>Địa chỉ của tôi</a><a class="active">Đơn hàng của tôi</a><a>Sản phẩm yêu thích</a><a>Thông báo</a><a>Đổi mật khẩu</a><a class="logout" onclick="logout()">Đăng xuất</a></nav></div><div class="card help"><h3>Bạn cần hỗ trợ?</h3><p>Đội ngũ chăm sóc khách hàng luôn sẵn sàng hỗ trợ bạn</p><button class="btn">Liên hệ ngay</button></div></aside><section class="content"><h1>Lịch sử đơn hàng</h1><p class="muted">Quản lý và theo dõi tất cả đơn hàng của bạn</p><div class="toolbar"><input class="search" placeholder="Tìm mã đơn, tên sản phẩm..."><button class="pill active">Tất cả</button><button class="pill">Đang giao</button><button class="pill">Đã nhận</button><button class="pill">Đã hủy</button><button class="pill">Đã hoàn</button></div><div id="orders"></div></section></main>` +
+        footer();
+      renderOrders();
+      updateCounts();
+    </script>
+  </body>
+</html>

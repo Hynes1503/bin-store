@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/binstore.css" />
+  <title>Bin Store - Trang chủ</title>
+  <style>
+    .hero {
+      min-height: 520px;
+      border-radius: 26px;
+      background: linear-gradient(105deg,
+          #efe0cc 0%,
+          #fffaf2 52%,
+          #e8d8c4 100%);
+      overflow: hidden;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      align-items: center;
+      padding: 0 80px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      font-size: 74px;
+      line-height: 0.94;
+      margin: 12px 0;
+      font-weight: 1000;
+      letter-spacing: -2px;
+    }
+
+    .hero p {
+      font-size: 19px;
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    .hero-img {
+      height: 410px;
+      object-fit: contain;
+      filter: drop-shadow(0 35px 35px rgba(0, 0, 0, 0.24));
+      margin-left: auto;
+    }
+
+    .sale-bubble {
+      position: absolute;
+      right: 68px;
+      top: 68px;
+      background: #fff;
+      border-radius: 50%;
+      width: 132px;
+      height: 132px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 1000;
+    }
+
+    .sale-bubble strong {
+      font-size: 38px;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      font-weight: 1000;
+    }
+
+    .arrow.left {
+      left: 22px;
+    }
+
+    .arrow.right {
+      right: 22px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d9d0c4;
+    }
+
+    .dots span:first-child {
+      background: #111;
+      width: 24px;
+    }
+
+    .promo {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 22px;
+      margin: 26px 0;
+    }
+
+    .promo-card {
+      min-height: 178px;
+      border-radius: 20px;
+      padding: 30px;
+      background: #f1e4d1;
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .promo-card.dark {
+      background: #101010;
+      color: #fff;
+    }
+
+    .promo-card h3 {
+      font-size: 35px;
+      margin: 8px 0;
+    }
+
+    .promo-card .shape {
+      position: absolute;
+      right: 28px;
+      bottom: 18px;
+      font-size: 84px;
+      opacity: 0.18;
+    }
+
+    .promo-card .btn {
+      margin-top: 8px;
+      padding: 12px 22px;
+      min-height: 44px;
+    }
+
+    .release {
+      display: grid;
+      grid-template-columns: 0.8fr 1fr 0.7fr;
+      align-items: center;
+      min-height: 330px;
+      border-radius: 24px;
+      background: linear-gradient(100deg, #f4ede4, #fff, #e8dfd4);
+      padding: 38px 46px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .release img {
+      height: 280px;
+      object-fit: contain;
+      filter: drop-shadow(0 25px 24px rgba(0, 0, 0, 0.18));
+    }
+
+    .release h2 {
+      font-size: 46px;
+      line-height: 1.05;
+      margin: 8px 0;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .countdown {
+      border: 1px solid #d7c7b4;
+      border-radius: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .countdown div {
+      padding: 18px;
+      border-right: 1px solid #d7c7b4;
+    }
+
+    .countdown div:last-child {
+      border-right: 0;
+    }
+
+    .countdown strong {
+      font-size: 28px;
+    }
+
+    .season {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 28px 0;
+    }
+
+    .season-card {
+      height: 220px;
+      border-radius: 22px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 34px;
+      background: #111;
+      color: #fff;
+      position: relative;
+    }
+
+    .season-card.light {
+      background: #ead8c0;
+      color: #111;
+    }
+
+    .season-card img {
+      position: absolute;
+      right: 25px;
+      bottom: 0;
+      height: 190px;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 22px rgba(0, 0, 0, 0.22));
+    }
+
+    .season-card h3 {
+      font-size: 38px;
+      margin: 0;
+    }
+
+    .newsletter-strip {
+      margin-top: 28px;
+      border-radius: 22px;
+      background: #f0dfc9;
+      padding: 26px 34px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr auto;
+      gap: 22px;
+      align-items: center;
+    }
+
+    .newsletter-strip input {
+      height: 56px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 22px;
+      outline: 0;
+    }
+
+    @media (max-width: 900px) {
+
+      .hero,
+      .release,
+      .promo,
+      .season,
+      .newsletter-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 42px 28px;
+      }
+
+      .hero h1 {
+        font-size: 48px;
+      }
+
+      .hero-img,
+      .release img {
+        height: 230px;
+      }
+
+      .sale-bubble {
+        right: 25px;
+        top: 25px;
+        width: 92px;
+        height: 92px;
+      }
+
+      .release {
+        padding: 28px;
+      }
+
+      .countdown {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script src="js/store.js"></script>
+  <script>
+    document.getElementById("app").innerHTML =
+      header("home") +
+      `<main class="container"><section class="hero"><button class="arrow left">‹</button><div><b>NEW COLLECTION</b><h1>STEP INTO<br>STYLE</h1><p>Khám phá bộ sưu tập sneaker mới nhất đến từ các thương hiệu hàng đầu.</p><a class="btn" href="allproduct.html">MUA NGAY</a><div class="dots"><span></span><span></span><span></span><span></span></div></div><img class="hero-img" src="images/shoe-1-main.png" alt="Sneaker"><div class="sale-bubble"><div>SALE<br><strong>50%</strong><br>OFF</div></div><button class="arrow right">›</button></section><section class="promo"><div class="promo-card"><b>FLASH SALE</b><h3>30% OFF</h3><span>TẤT CẢ SẢN PHẨM</span><a class="btn" href="allproduct.html">MUA NGAY</a><div class="shape">ϟ</div></div><div class="promo-card dark"><b>FREE SHIPPING</b><h3>ĐƠN TỪ 1.000.000Đ</h3><span>Áp dụng toàn quốc</span><a class="btn outline" href="allproduct.html">XEM NGAY</a><div class="shape">🚚</div></div><div class="promo-card"><b>VOUCHER</b><h3>100K</h3><span>CHO ĐƠN TỪ 1.500.000Đ</span><button class="btn" onclick="toast('Mã của bạn: BIN100')">LẤY MÃ NGAY</button><div class="shape">%</div></div></section><h2 class="section-title">SẮP RA MẮT</h2><p class="section-sub">Đón chờ những siêu phẩm mới nhất.</p><section class="release"><div><b>NIKE AIR MAX 270</b><h2>FUTURE IN<br>MOTION</h2><div class="info-list"><span>📅 Dự kiến ra mắt 20.06.2025</span><span>🎨 Màu sắc 3 phiên bản</span><span>🔔 Đăng ký nhận thông tin để không bỏ lỡ</span></div><button class="btn">ĐĂNG KÝ NGAY</button></div><img src="images/shoe-4-main.png" alt="Upcoming"><div><p class="muted"><b>THỜI GIAN CÒN LẠI</b></p><div class="countdown"><div><strong>12</strong><br>NGÀY</div><div><strong>05</strong><br>GIỜ</div><div><strong>45</strong><br>PHÚT</div><div><strong>30</strong><br>GIÂY</div></div></div></section><section class="season"><div class="season-card"><div><h3>BACK TO<br>SCHOOL</h3><p>GIẢM ĐẾN 40%</p><a class="btn outline" href="allproduct.html">MUA NGAY</a></div><img src="images/shoe-6-main.png"></div><div class="season-card light"><div><h3>SUMMER<br>VIBES</h3><p>GIẢM ĐẾN 35%</p><a class="btn" href="allproduct.html">MUA NGAY</a></div><img src="images/shoe-1-main.png" ></div></section>${trust()}<section class="newsletter-strip"><div><h3>✉ NHẬN NGAY ƯU ĐÃI MỚI NHẤT</h3><p>Đăng ký email để nhận thông tin khuyến mãi và sản phẩm mới.</p></div><input placeholder="Nhập email của bạn"><button class="btn">ĐĂNG KÝ</button></section></main>` +
+      footer();
+    updateCounts();
+  </script>
+</body>
+
+</html>

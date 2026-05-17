@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/binstore.css" />
+    <title>Bin Store - Wishlist</title>
+    <style>
+      .top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 16px 0 28px;
+      }
+      .page-title {
+        font-size: 42px;
+        margin: 0;
+      }
+      .wishlist-card {
+        padding: 22px;
+      }
+      .wishlist-item {
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        gap: 20px;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .wishlist-item:last-child {
+        border-bottom: 0;
+      }
+      .wishlist-img {
+        width: 110px;
+        height: 92px;
+        border-radius: 16px;
+        padding: 10px;
+        object-fit: contain;
+      }
+      .item-name {
+        font-size: 18px;
+        font-weight: 1000;
+      }
+      .btn-small {
+        border: 1px solid #111;
+        border-radius: 999px;
+        background: #fff;
+        padding: 11px 16px;
+        font-weight: 900;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .btn-small.dark {
+        background: #111;
+        color: #fff;
+      }
+      .wish-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .empty {
+        text-align: center;
+        padding: 60px;
+        color: #777;
+      }
+      @media (max-width: 850px) {
+        .wishlist-item {
+          grid-template-columns: 90px 1fr;
+        }
+        .wish-actions {
+          grid-column: 1/-1;
+          justify-content: flex-start;
+        }
+        .top-row {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="js/store.js"></script>
+    <script>
+      function renderWishlist() {
+        const ids = getWishlist();
+        const box = document.getElementById("wishlistList");
+        if (!ids.length) {
+          box.innerHTML =
+            '<div class="empty"><h3>Wishlist đang trống</h3><p>Hãy thêm sản phẩm yêu thích từ trang sản phẩm.</p></div>';
+          updateCounts();
+          return;
+        }
+        box.innerHTML = ids
+          .map((id) => {
+            const p = PRODUCTS.find((x) => x.id == id);
+            return `<div class="wishlist-item"><img class="wishlist-img" src="${imgPath(p)}" alt="${p.name}"><div><div class="item-name">${p.name}</div><p class="muted">${p.color}</p></div><div class="wish-actions"><div class="money">${money(p.price)}</div><a class="btn-small" href="product.html?id=${p.id}">Chi tiết</a><button class="btn-small dark" onclick="addToCart(${p.id})">Thêm giỏ hàng</button><button class="btn-small" onclick="toggleWishlist(${p.id});renderWishlist()">Xóa</button></div></div>`;
+          })
+          .join("");
+        updateCounts();
+      }
+      document.getElementById("app").innerHTML =
+        header() +
+        `<main class="container"><div class="top-row"><h1 class="page-title">Wishlist</h1><a class="btn outline" href="allproduct.html">Tiếp tục mua sắm</a></div><section class="card wishlist-card" id="wishlistList"></section></main>` +
+        footer();
+      renderWishlist();
+    </script>
+  </body>
+</html>

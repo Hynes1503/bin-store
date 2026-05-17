@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/binstore.css" />
+    <title>Đăng ký - Bin Store</title>
+    <style>
+      .auth {
+        max-width: 520px;
+        margin: 40px auto;
+        padding: 34px;
+      }
+      .auth h1 {
+        text-align: center;
+        font-size: 36px;
+      }
+      .auth input {
+        width: 100%;
+        height: 52px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        margin: 10px 0;
+        padding: 0 16px;
+      }
+      .auth .btn {
+        width: 100%;
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="js/store.js"></script>
+    <script>
+      document.getElementById("app").innerHTML =
+        header() +
+        `<main class="container"><section class="card auth"><h1>Đăng ký</h1><input placeholder="Email"><input placeholder="Mật khẩu" type="password"><button class="btn gold">Đăng ký</button><p class="muted" style="text-align:center">Bin Store - Sneaker premium</p></section></main>` +
+        footer();
+      updateCounts();
+    </script>
+  </body>
+</html>

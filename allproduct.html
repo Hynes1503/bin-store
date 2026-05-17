@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/binstore.css" />
+    <title>Bin Store - Sản phẩm</title>
+    <style>
+      .shop-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: end;
+        margin: 18px 0 28px;
+      }
+      .shop-head h1 {
+        font-size: 48px;
+        margin: 0;
+        font-weight: 1000;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 230px 1fr;
+        gap: 28px;
+      }
+      .filter {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+        padding: 18px;
+      }
+      .filter h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+      .filter-group {
+        border-top: 1px solid var(--line);
+        padding: 12px 0;
+      }
+      .filter-toggle {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 900;
+        font-size: 14px;
+      }
+      .filter-options {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .filter-options label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+      }
+      .size-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .size-pills span {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 6px 9px;
+        background: #fff;
+        font-weight: 800;
+        color: #111;
+      }
+      .color-dots {
+        display: flex;
+        gap: 8px;
+      }
+      .color-dots span {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid #ccc;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+      }
+      .product-card {
+        background: #fffdfa;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: var(--shadow2);
+        transition: 0.25s;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+      }
+      .product-img {
+        height: 260px;
+        display: grid;
+        place-items: center;
+      }
+      .product-img img {
+        width: 88%;
+        height: 220px;
+        object-fit: contain;
+        filter: drop-shadow(0 18px 18px rgba(0, 0, 0, 0.08));
+      }
+      .product-info {
+        padding: 20px;
+      }
+      .product-info h3 {
+        min-height: 48px;
+        margin: 0 0 8px;
+      }
+      .card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .card-actions .btn {
+        padding: 12px 14px;
+        min-height: 42px;
+      }
+      .sort {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        height: 50px;
+        padding: 0 22px;
+        background: #fff;
+        font-weight: 800;
+      }
+      @media (max-width: 1000px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .filter {
+          position: static;
+        }
+      }
+      @media (max-width: 620px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .shop-head {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="js/store.js"></script>
+    <script>
+      function render() {
+        const list = document.getElementById("products");
+        const w = getWishlist();
+        list.innerHTML = PRODUCTS.map(
+          (p) =>
+            `<article class="product-card"><a href="product.html?id=${p.id}" class="product-img"><img src="${imgPath(p)}" alt="${p.name}"></a><div class="product-info"><h3>${p.name}</h3><p class="muted">${p.brand} · ${p.color}</p><p class="money">${money(p.price)}</p><div class="card-actions"><button class="btn" onclick="addToCart(${p.id})">🛒 Thêm giỏ hàng</button><button class="btn outline" onclick="toggleWishlist(${p.id});render()">${w.includes(p.id) ? "✓ Đã lưu" : "♡ Wishlist"}</button></div></div></article>`,
+        ).join("");
+        updateCounts();
+      }
+      document.getElementById("app").innerHTML =
+        header("products") +
+        `<main class="container"><div class="shop-head"><div><h1>Sản phẩm</h1><p class="muted">Khám phá các mẫu sneaker mới nhất tại Bin Store.</p></div><select class="sort"><option>Newest</option><option>Giá thấp đến cao</option><option>Giá cao đến thấp</option></select></div><div class="layout"><aside class="card filter"><h3>Bộ lọc</h3><div class="filter-group"><button class="filter-toggle">Danh mục <span>−</span></button><div class="filter-options"><label><input type="checkbox"> Nike</label><label><input type="checkbox"> Jordan</label><label><input type="checkbox"> Adidas</label><label><input type="checkbox"> New Balance</label></div></div><div class="filter-group"><button class="filter-toggle">Size <span>−</span></button><div class="filter-options size-pills"><span>38</span><span>39</span><span>40</span><span>41</span><span>42</span><span>43</span></div></div><div class="filter-group"><button class="filter-toggle">Màu sắc <span>−</span></button><div class="filter-options color-dots"><span style="background:#fff"></span><span style="background:#111"></span><span style="background:#e8dfd0"></span><span style="background:#6b7fa3"></span></div></div><div class="filter-group"><button class="filter-toggle">Khoảng giá <span>−</span></button><div class="filter-options"><span>0đ - 7.000.000đ</span></div></div></aside><section class="grid" id="products"></section></div></main>` +
+        footer();
+      render();
+    </script>
+  </body>
+</html>

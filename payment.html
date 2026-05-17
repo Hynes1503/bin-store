@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/binstore.css" />
+    <title>Thanh toán - Bin Store</title>
+    <style>
+      .steps {
+        max-width: 940px;
+        margin: 0 auto 28px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 22px;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 900;
+      }
+      .num {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+      .step.active .num {
+        background: #111;
+        color: #fff;
+      }
+      .checkout {
+        display: grid;
+        grid-template-columns: 1fr 410px;
+        gap: 28px;
+        align-items: start;
+      }
+      .panel,
+      .summary {
+        padding: 26px;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      label {
+        font-weight: 900;
+        display: block;
+        margin-bottom: 8px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 0 15px;
+        height: 50px;
+        background: #fff;
+        outline: 0;
+      }
+      textarea {
+        height: 80px;
+        padding-top: 14px;
+      }
+      .full {
+        grid-column: 1/-1;
+      }
+      .option {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        margin: 12px 0;
+        background: #fff;
+        cursor: pointer;
+      }
+      .option.active {
+        border-color: var(--gold);
+        box-shadow: inset 0 0 0 1px var(--gold);
+      }
+      .pay-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .pay-option {
+        grid-template-columns: auto 1fr;
+        margin: 0;
+        min-height: 84px;
+      }
+      .summary-item {
+        display: grid;
+        grid-template-columns: 70px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        margin: 14px 0;
+      }
+      .summary-item img {
+        width: 70px;
+        height: 58px;
+        border-radius: 12px;
+        padding: 6px;
+      }
+      .line {
+        display: flex;
+        justify-content: space-between;
+        margin: 14px 0;
+      }
+      .total {
+        border-top: 2px solid #111;
+        padding-top: 16px;
+        font-weight: 1000;
+      }
+      .total strong {
+        color: var(--gold);
+        font-size: 22px;
+      }
+      .summary .btn {
+        width: 100%;
+        margin-top: 18px;
+      }
+      @media (max-width: 950px) {
+        .checkout,
+        .form-grid,
+        .steps,
+        .pay-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="js/store.js"></script>
+    <script>
+      let ship = 30000;
+      let pay = "Thẻ tín dụng / Ghi nợ";
+      function calcCheckout() {
+        const cart = getCart();
+        const totals = orderTotal(cart, ship, 950000);
+        return { cart, ...totals };
+      }
+      function setShip(v) {
+        ship = v;
+        document.querySelectorAll(".ship").forEach((x) => {
+          x.classList.remove("active");
+          x.querySelector("input").checked = false;
+        });
+        const el = document.querySelector(`[data-ship="${v}"]`);
+        el.classList.add("active");
+        el.querySelector("input").checked = true;
+        renderSummary();
+      }
+      function setPay(v, el) {
+        pay = v;
+        document.querySelectorAll(".pay-option").forEach((x) => {
+          x.classList.remove("active");
+          x.querySelector("input").checked = false;
+        });
+        el.classList.add("active");
+        el.querySelector("input").checked = true;
+      }
+      function renderSummary() {
+        const c = calcCheckout();
+        document.getElementById("orderItems").innerHTML = c.cart.length
+          ? c.cart
+              .map((i) => {
+                const p = PRODUCTS.find((x) => x.id == i.id);
+                return `<div class="summary-item"><img src="${imgPath(p)}"><div><b>${p.name}</b><p class="muted">${i.color || p.color} · Size ${i.size} · x${i.qty}</p></div><b>${money(p.price * i.qty)}</b></div>`;
+              })
+              .join("")
+          : '<p class="muted">Chưa có sản phẩm trong giỏ.</p>';
+        document.getElementById("st").textContent = money(c.subtotal);
+        document.getElementById("dc").textContent = "-" + money(c.discount);
+        document.getElementById("sh").textContent = money(c.shipping);
+        document.getElementById("tt").textContent = money(c.total);
+        document
+          .getElementById("orderBtn")
+          .classList.toggle("disabled", !c.cart.length);
+      }
+      function placeOrder() {
+        const c = calcCheckout();
+        if (!c.cart.length) {
+          toast("Giỏ hàng đang trống");
+          return;
+        }
+        const now = new Date();
+        const code =
+          "#BIN-" +
+          now.getFullYear() +
+          "-" +
+          String(Math.floor(Math.random() * 9000) + 1000);
+        const order = {
+          code,
+          date: now.toLocaleDateString("vi-VN"),
+          pay,
+          status: "ĐANG XỬ LÝ",
+          cls: "orange",
+          items: c.cart,
+          shipping: c.shipping,
+          discount: c.discount,
+          total: c.total,
+          actions: ["Hủy đơn", "Chi tiết"],
+        };
+        setOrders([order, ...getOrders()]);
+        clearCart();
+        location.href = "order_history.html";
+      }
+      document.getElementById("app").innerHTML =
+        header() +
+        `<main class="container"><div class="steps"><div class="step active"><span class="num">1</span>Thông tin giao hàng</div><div class="step active"><span class="num">2</span>Vận chuyển</div><div class="step active"><span class="num">3</span>Thanh toán</div></div><div class="checkout"><section><div class="card panel"><h2>Thông tin giao hàng</h2><div class="form-grid"><div><label>Họ</label><input value="Nguyễn"></div><div><label>Tên</label><input value="Văn An"></div><div><label>Số điện thoại</label><input value="0912 345 678"></div><div><label>Email</label><input value="email@example.com"></div><div><label>Tỉnh / Thành phố</label><select><option>Hà Nội</option></select></div><div><label>Quận / Huyện</label><select><option>Cầu Giấy</option></select></div><div class="full"><label>Địa chỉ cụ thể</label><input value="123 Đường Cầu Giấy, Dịch Vọng Hậu"></div><div class="full"><label>Ghi chú</label><textarea placeholder="Ghi chú cho người giao hàng..."></textarea></div></div></div><div class="card panel" style="margin-top:22px"><h2>Phương thức vận chuyển</h2><div class="option ship active" data-ship="30000" onclick="setShip(30000)"><input type="radio" name="ship" checked><div><b>Giao hàng tiêu chuẩn</b><p class="muted">3-5 ngày làm việc</p></div><b>30.000đ</b></div><div class="option ship" data-ship="60000" onclick="setShip(60000)"><input type="radio" name="ship"><div><b>Giao hàng nhanh</b><p class="muted">1-2 ngày làm việc</p></div><b>60.000đ</b></div><div class="option ship" data-ship="0" onclick="setShip(0)"><input type="radio" name="ship"><div><b>Miễn phí vận chuyển</b><p class="muted">Đơn hàng từ 2.000.000đ</p></div><b style="color:var(--green)">Miễn phí</b></div></div><div class="card panel" style="margin-top:22px"><h2>Phương thức thanh toán</h2><div class="pay-grid"><label class="option pay-option active" onclick="setPay('Thẻ tín dụng / Ghi nợ',this)"><input type="radio" name="pay" checked><span>Thẻ tín dụng / Ghi nợ</span></label><label class="option pay-option" onclick="setPay('MoMo',this)"><input type="radio" name="pay"><span>MoMo</span></label><label class="option pay-option" onclick="setPay('VNPay',this)"><input type="radio" name="pay"><span>VNPay</span></label><label class="option pay-option" onclick="setPay('Tiền mặt (COD)',this)"><input type="radio" name="pay"><span>Tiền mặt (COD)</span></label></div></div></section><aside class="card summary"><h2>Đơn hàng của bạn</h2><div id="orderItems"></div><hr><div class="line"><span>Tạm tính</span><b id="st">0đ</b></div><div class="line"><span>Giảm giá</span><b id="dc" style="color:var(--green)">0đ</b></div><div class="line"><span>Phí vận chuyển</span><b id="sh">0đ</b></div><div class="line total"><span>Tổng thanh toán</span><strong id="tt">0đ</strong></div><button id="orderBtn" class="btn gold" onclick="placeOrder()">Đặt hàng ngay</button></aside></div>${trust()}</main>` +
+        footer();
+      renderSummary();
+      updateCounts();
+    </script>
+  </body>
+</html>
